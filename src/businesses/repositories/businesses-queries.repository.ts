@@ -7,6 +7,7 @@ import type {
 } from '@/shared/entities/business.entity';
 import type { FindManyBusinessesDto } from './dtos/find-many-businesses.dto';
 import { businesses } from '@/shared/dbschemas/businesses.schema';
+import { FindOneBusinessDto } from './dtos/find-one-business.dto';
 
 type Options = {
   ensureActive?: boolean;
@@ -74,7 +75,22 @@ export class BusinessesQueriesRepository {
     return business;
   }
 
-  public async findOne(): Promise<BusinessDetail | null> {
-    return null;
+  public async findOne(
+    meta: FindOneBusinessDto,
+  ): Promise<BusinessDetail | null> {
+    const filters: SQL[] = [];
+
+    if (meta.slug) filters.push(eq(businesses.slug, meta.slug));
+
+    if (meta.id) filters.push(eq(businesses.id, meta.id));
+
+    const [business] = await this.db
+      .select()
+      .from(businesses)
+      .where(and(...filters));
+
+    if (!business) return null;
+
+    return business;
   }
 }

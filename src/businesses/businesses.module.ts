@@ -5,6 +5,7 @@ import { BusinessesCommandsRepository } from './repositories/businesses-commands
 import { BusinessesQueriesRepository } from './repositories/businesses-queries.repository';
 import { CreateBusinessUseCase } from './usecases/create-business.usecase';
 import { FindOneBusinessByUseCase } from './usecases/find-one-business-by.usecase';
+import { FindOneBusinessUseCase } from './usecases/find-one-business.usecase';
 
 @Module({
   imports: [DbModule],
@@ -13,10 +14,11 @@ import { FindOneBusinessByUseCase } from './usecases/find-one-business-by.usecas
     //UseCases
     CreateBusinessUseCase,
     FindOneBusinessByUseCase,
+    FindOneBusinessUseCase,
     //Repositories
     BusinessesCommandsRepository,
     BusinessesQueriesRepository,
   ],
-  exports: [FindOneBusinessByUseCase],
+  exports: [FindOneBusinessByUseCase, FindOneBusinessUseCase],
 })
 export class BusinessesModule {}
