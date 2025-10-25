@@ -10,9 +10,10 @@ import { EnsureSessionUseCase } from './usecases/ensure-session.usecase';
 import { SignUpUseCase } from './usecases/sign-up.usecase';
 import { SignOutUseCase } from './usecases/sign-out.usecase';
 import { CloseAllSessionUseCase } from './usecases/close-all-session.usecase';
+import { BusinessesModule } from '@/businesses/businesses.module';
 
 @Module({
-  imports: [ConfigModule, UsersModule, DbModule],
+  imports: [ConfigModule, UsersModule, DbModule, BusinessesModule],
   controllers: [AuthController],
   providers: [
     //UseCases

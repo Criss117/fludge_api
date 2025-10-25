@@ -77,8 +77,13 @@ export class BusinessesQueriesRepository {
 
   public async findOne(
     meta: FindOneBusinessDto,
+    options?: Options,
   ): Promise<BusinessDetail | null> {
     const filters: SQL[] = [];
+    const optionsFilters: SQL[] = [];
+
+    if (options?.ensureActive)
+      optionsFilters.push(eq(businesses.isActive, true));
 
     if (meta.slug) filters.push(eq(businesses.slug, meta.slug));
 
@@ -87,7 +92,7 @@ export class BusinessesQueriesRepository {
     const [business] = await this.db
       .select()
       .from(businesses)
-      .where(and(...filters));
+      .where(and(...filters, ...optionsFilters));
 
     if (!business) return null;
 
