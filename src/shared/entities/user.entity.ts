@@ -6,8 +6,10 @@ export interface UserSummary extends AuditMetadata {
   firstName: string;
   lastName: string;
   email: string;
-  password?: string | null;
-  emailVerified?: boolean | undefined;
+  password?: string;
+  emailVerified: boolean;
+  phone: string | null;
+  isRoot: boolean;
 }
 
 export interface UserDetail extends UserSummary {
