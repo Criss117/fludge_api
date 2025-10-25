@@ -1,5 +1,7 @@
-import { AuditMetadata } from './audit-metadata';
-import { SessionSummary } from './session.entity';
+import type { AuditMetadata } from './audit-metadata';
+import type { BusinessSummary } from './business.entity';
+import type { GroupSummary } from './group.entity';
+import type { SessionSummary } from './session.entity';
 
 export interface UserSummary extends AuditMetadata {
   id: string;
@@ -14,4 +16,6 @@ export interface UserSummary extends AuditMetadata {
 
 export interface UserDetail extends UserSummary {
   sessions: SessionSummary[];
+  isRootIn?: BusinessSummary[];
+  isEmployeeIn?: BusinessSummary & { groups: GroupSummary[] };
 }
