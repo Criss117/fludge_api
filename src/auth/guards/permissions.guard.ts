@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -9,6 +10,7 @@ import { META_PERMISSIONS } from '../decorators/permissions.decorator';
 import { Permission } from '@/shared/entities/permissions';
 import { UserDetail } from '@/shared/entities/user.entity';
 import { FindOneBusinessUseCase } from '@/businesses/usecases/find-one-business.usecase';
+import { UserNotRootOrEmployeeException } from '../exceptions/user-not-root-or-employee.exception';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -48,9 +50,33 @@ export class PermissionsGuard implements CanActivate {
       user.id,
     );
 
-    console.log({ business });
+    const userIsRootOrEmployeeInBusiness =
+      business.rootUserId === user.id ||
+      business.employees.some((e) => e.id === user.id);
+
+    if (!userIsRootOrEmployeeInBusiness)
+      throw new UserNotRootOrEmployeeException();
 
     req.business = business;
+
+    if (user.isRoot) return true;
+    //Here the user is an employee in the business
+
+    const permissionsWitoutBusinesses = permissions.filter((p) =>
+      p.includes('businesses'),
+    );
+
+    const userPermissions = user.isEmployeeIn?.groups.map((g) => g.permissions);
+
+    if (!userPermissions?.length)
+      throw new ForbiddenException('No tiene permisos para hacer esto');
+
+    const userHasPermissions = permissionsWitoutBusinesses.some((p) =>
+      userPermissions.some((up) => up.includes(p)),
+    );
+
+    if (!userHasPermissions)
+      throw new ForbiddenException('No tiene permisos para hacer esto');
 
     return true;
   }
