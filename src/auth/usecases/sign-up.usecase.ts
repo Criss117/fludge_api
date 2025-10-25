@@ -7,6 +7,6 @@ export class SignUpUseCase {
   constructor(private readonly createUserUseCase: CreateUserUseCase) {}
 
   public async execute(values: CreateUserDto) {
-    await this.createUserUseCase.execute(values, 'isEmployee');
+    await this.createUserUseCase.execute(values, 'isRoot');
   }
 }
