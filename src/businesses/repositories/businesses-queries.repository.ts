@@ -35,6 +35,8 @@ export class BusinessesQueriesRepository {
 
     if (meta.id) filters.push(eq(businesses.id, meta.id));
 
+    if (meta.slug) filters.push(eq(businesses.slug, meta.slug));
+
     return this.db
       .select()
       .from(businesses)
@@ -59,6 +61,8 @@ export class BusinessesQueriesRepository {
     if (meta.nit) filters.push(eq(businesses.nit, meta.nit));
 
     if (meta.id) filters.push(eq(businesses.id, meta.id));
+
+    if (meta.slug) filters.push(eq(businesses.slug, meta.slug));
 
     const [business] = await this.db
       .select()

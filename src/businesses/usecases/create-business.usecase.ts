@@ -3,6 +3,7 @@ import { BusinessesCommandsRepository } from '../repositories/businesses-command
 import { BusinessesQueriesRepository } from '../repositories/businesses-queries.repository';
 import { CreateBusinessDto } from '../dtos/create-business.dto';
 import { BusinessAlreadyExistsException } from '../exceptions/business-already-exists.exception';
+import { slugify } from '@/shared/utils/slugify';
 
 @Injectable()
 export class CreateBusinessUseCase {
@@ -28,6 +29,7 @@ export class CreateBusinessUseCase {
     const createdBusiness =
       await this.businessesCommandsRepository.saveAndReturn({
         ...values,
+        slug: slugify(values.name),
         rootUserId: userId,
       });
 

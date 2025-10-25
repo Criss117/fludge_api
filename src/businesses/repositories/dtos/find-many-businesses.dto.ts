@@ -3,4 +3,5 @@ export interface FindManyBusinessesDto {
   name?: string;
   nit?: string;
   id?: string;
+  slug?: string;
 }

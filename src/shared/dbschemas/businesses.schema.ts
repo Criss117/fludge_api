@@ -12,6 +12,7 @@ export const businesses = sqliteTable(
       .notNull()
       .references(() => users.id),
     name: text('name').notNull(),
+    slug: text('slug').notNull(),
     legalName: text('legal_name'),
     nit: text('nit').notNull().unique(),
     address: text('address'),
