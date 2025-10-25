@@ -1,4 +1,7 @@
-import { AuditMetadata } from './audit-metadata';
+import type { AuditMetadata } from './audit-metadata';
+import type { EmployeeDetail } from './employee.entity';
+import { GroupSummary } from './group.entity';
+import type { UserSummary } from './user.entity';
 
 export interface BusinessSummary extends AuditMetadata {
   id: string;
@@ -12,4 +15,8 @@ export interface BusinessSummary extends AuditMetadata {
   address: string | null;
 }
 
-export interface BusinessDetail extends BusinessSummary {}
+export interface BusinessDetail extends BusinessSummary {
+  rootUser: UserSummary;
+  employees: EmployeeDetail[];
+  groups: GroupSummary[];
+}

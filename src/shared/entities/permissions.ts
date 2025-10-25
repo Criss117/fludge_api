@@ -4,6 +4,7 @@ export const resources = [
   'products',
   'providers',
   'clients',
+  'businesses',
 ] as const;
 export const actions = ['create', 'read', 'update', 'delete'] as const;
 
