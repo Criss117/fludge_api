@@ -1,17 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DBSERVICE, type LibSQLDatabase } from '@/db/db.module';
+import { DBSERVICE, type TX, type LibSQLDatabase } from '@/db/db.module';
 import {
   users,
   type InsertUser,
   type SelectUser,
 } from '@/shared/dbschemas/users.schema';
 
+type Options = {
+  tx?: TX;
+};
+
 @Injectable()
 export class UsersCommandsRepository {
   constructor(@Inject(DBSERVICE) private readonly db: LibSQLDatabase) {}
 
-  public async save(values: InsertUser) {
-    await this.db
+  public async save(values: InsertUser, options?: Options) {
+    const db = options?.tx ?? this.db;
+
+    await db
       .insert(users)
       .values(values)
       .onConflictDoUpdate({
@@ -23,8 +29,13 @@ export class UsersCommandsRepository {
       });
   }
 
-  public async saveAndReturn(values: InsertUser): Promise<SelectUser> {
-    const [user] = await this.db
+  public async saveAndReturn(
+    values: InsertUser,
+    options?: Options,
+  ): Promise<SelectUser> {
+    const db = options?.tx ?? this.db;
+
+    const [user] = await db
       .insert(users)
       .values(values)
       .onConflictDoUpdate({

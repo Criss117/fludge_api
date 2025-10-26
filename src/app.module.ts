@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { BusinessesModule } from './businesses/businesses.module';
 import { GroupsModule } from './groups/groups.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EmployeesModule } from './employees/employees.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     AuthModule,
     BusinessesModule,
     GroupsModule,
+    EmployeesModule,
   ],
   controllers: [AppController],
 })

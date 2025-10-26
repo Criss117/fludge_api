@@ -4,6 +4,11 @@ import { UsersCommandsRepository } from '../repositories/users-commands.reposito
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UserAlreadyExistsException } from '../exceptions/user-already-exists.exception';
 import { hash } from '@/shared/utils/hash';
+import type { TX } from '@/db/db.module';
+
+type Options = {
+  tx?: TX;
+};
 
 @Injectable()
 export class CreateUserUseCase {
@@ -12,7 +17,11 @@ export class CreateUserUseCase {
     private readonly usersCommandsRepository: UsersCommandsRepository,
   ) {}
 
-  public async execute(values: CreateUserDto, isRoot: 'isRoot' | 'isEmployee') {
+  public async execute(
+    values: CreateUserDto,
+    role: 'isRoot' | 'isEmployee',
+    options?: Options,
+  ) {
     const exisitingUser = await this.usersQueriesRepository.findOneBy({
       email: values.email,
     });
@@ -21,10 +30,13 @@ export class CreateUserUseCase {
 
     const hashedPassword = await hash(values.password);
 
-    await this.usersCommandsRepository.save({
-      ...values,
-      isRoot: isRoot === 'isRoot',
-      password: hashedPassword,
-    });
+    return this.usersCommandsRepository.saveAndReturn(
+      {
+        ...values,
+        isRoot: role === 'isRoot',
+        password: hashedPassword,
+      },
+      options,
+    );
   }
 }

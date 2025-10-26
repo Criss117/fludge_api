@@ -36,6 +36,6 @@ export class BusinessesController {
   @Get(':businessSlug')
   @Permissions('businesses:read')
   public findOneBusiness(@GetBusiness() business: BusinessDetail) {
-    return HTTPResponse.ok('Business found', business);
+    return HTTPResponse.ok('Negocio obtenido correctamente', business);
   }
 }
