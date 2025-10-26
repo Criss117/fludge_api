@@ -6,6 +6,8 @@ import { text } from 'drizzle-orm/sqlite-core';
 import { businesses } from './businesses.schema';
 import { users } from './users.schema';
 import { primaryKey } from 'drizzle-orm/sqlite-core';
+import { unique } from 'drizzle-orm/sqlite-core';
+import { groups } from './groups.schema';
 
 export const employees = sqliteTable('employees', {
   id: UUIDv4(),
@@ -29,7 +31,7 @@ export const employeeGroups = sqliteTable(
       .references(() => employees.id)
       .notNull(),
     groupId: text('group_id')
-      .references(() => businesses.id)
+      .references(() => groups.id)
       .notNull(),
     ...auditMetadata,
   },
@@ -38,6 +40,7 @@ export const employeeGroups = sqliteTable(
       columns: [t.employeeId, t.groupId],
       name: 'employee_groups_pk',
     }),
+    unique('employee_groups_employee_id_group_id').on(t.employeeId, t.groupId),
   ],
 );
 

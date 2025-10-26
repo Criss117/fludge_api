@@ -7,9 +7,10 @@ import { EmployeesCommandsRepository } from './repositories/employees-commands.r
 import { FindOneEmployeeUseCase } from './usecases/find-one-employee.usecase';
 import { UsersModule } from '@/users/users.module';
 import { CreateEmployeeUseCase } from './usecases/create-employee.usecase';
+import { EmployeesGroupsModule } from '@/employees-groups/employees-groups.module';
 
 @Module({
-  imports: [DbModule, BusinessesModule, UsersModule],
+  imports: [DbModule, BusinessesModule, UsersModule, EmployeesGroupsModule],
   controllers: [EmployeesController],
   providers: [
     //Use cases
