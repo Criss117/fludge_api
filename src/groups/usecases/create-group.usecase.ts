@@ -23,7 +23,7 @@ export class CreateGroupUseCase {
     values: CreateGroupDto,
     options?: Options,
   ) {
-    const existingGroups = await this.groupsQueriesRepository.findManyBy(
+    const existingGroups = await this.groupsQueriesRepository.findOneBy(
       {
         businessId,
         name: values.name,
@@ -34,7 +34,7 @@ export class CreateGroupUseCase {
       },
     );
 
-    if (existingGroups.length) throw new GroupAlreadyExistsException();
+    if (existingGroups) throw new GroupAlreadyExistsException();
 
     const business = await this.groupsCommandsRepository.saveAndReturn(
       {
