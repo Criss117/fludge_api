@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq, or, type SQL, and, getTableColumns } from 'drizzle-orm';
+import { eq, or, type SQL, and, getTableColumns, sql } from 'drizzle-orm';
 import { DBSERVICE, type LibSQLDatabase } from '@/db/db.module';
 import type {
   BusinessDetail,
@@ -101,7 +101,7 @@ export class BusinessesQueriesRepository {
     const [business] = await this.db
       .select({
         ...getTableColumns(businesses),
-        rootUser: getTableColumns(users),
+        rootUser: { ...getTableColumns(users), password: sql<undefined>`NULL` },
       })
       .from(businesses)
       .innerJoin(users, eq(users.id, businesses.rootUserId))
@@ -117,7 +117,7 @@ export class BusinessesQueriesRepository {
     const businessEmployeesPromise = this.db
       .select({
         ...getTableColumns(employees),
-        user: getTableColumns(users),
+        user: { ...getTableColumns(users), password: sql<undefined>`NULL` },
       })
       .from(employees)
       .innerJoin(users, eq(users.id, employees.userId))
