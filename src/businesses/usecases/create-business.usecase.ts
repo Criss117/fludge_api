@@ -1,4 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { BusinessesCommandsRepository } from '../repositories/businesses-commands.repository';
 import { BusinessesQueriesRepository } from '../repositories/businesses-queries.repository';
 import { CreateBusinessDto } from '../dtos/create-business.dto';
@@ -10,6 +11,7 @@ export class CreateBusinessUseCase {
   constructor(
     private readonly businessesCommandsRepository: BusinessesCommandsRepository,
     private readonly businessesQueriesRepository: BusinessesQueriesRepository,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   public async execute(userId: string, values: CreateBusinessDto) {
@@ -35,6 +37,10 @@ export class CreateBusinessUseCase {
 
     if (!createdBusiness)
       throw new InternalServerErrorException('Error al crear el negocio');
+
+    this.eventEmitter.emit('business:created', {
+      businessId: createdBusiness.id,
+    });
 
     return createdBusiness;
   }

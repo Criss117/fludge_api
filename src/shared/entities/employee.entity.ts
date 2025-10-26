@@ -8,9 +8,9 @@ export interface EmployeeSummary extends AuditMetadata {
   userId: string;
   hireDate: Date;
   salary: number;
+  user: UserSummary;
 }
 
 export interface EmployeeDetail extends EmployeeSummary {
-  user: UserSummary;
   groups: GroupSummary[];
 }
