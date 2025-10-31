@@ -1,5 +1,5 @@
 export interface FindManyGroupsBy {
-  gropId?: string;
+  groupId?: string;
   name?: string;
   businessId: string;
 }

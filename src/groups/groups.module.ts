@@ -6,6 +6,8 @@ import { GroupsQueriesRepository } from './repositories/groups-queries.repositor
 import { GroupsCommandsRepository } from './repositories/groups-commands.repository';
 import { DbModule } from '@/db/db.module';
 import { FindOneGroupUseCase } from './usecases/find-one-group.usecase';
+import { AddPermissionsUseCase } from './usecases/add-permissions.usecase';
+import { RemovePermissionsUseCase } from './usecases/remove-permissions.usecase';
 
 @Module({
   imports: [BusinessesModule, DbModule],
@@ -14,6 +16,8 @@ import { FindOneGroupUseCase } from './usecases/find-one-group.usecase';
     //Use cases
     CreateGroupUseCase,
     FindOneGroupUseCase,
+    AddPermissionsUseCase,
+    RemovePermissionsUseCase,
 
     //Repositories
     GroupsQueriesRepository,

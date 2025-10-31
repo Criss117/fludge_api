@@ -16,7 +16,7 @@ export class HTTPResponse {
     };
   }
 
-  public static ok<T>(message: string, data?: T): CommonResponse<T> {
+  public static ok<T = null>(message: string, data?: T): CommonResponse<T> {
     return {
       message,
       statusCode: HttpStatus.OK,

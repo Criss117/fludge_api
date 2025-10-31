@@ -27,7 +27,7 @@ export class GroupsQueriesRepository {
 
     if (options?.ensureActive) optionsFilters.push(eq(groups.isActive, true));
 
-    if (meta.gropId) groupsFilters.push(eq(groups.id, meta.gropId));
+    if (meta.groupId) groupsFilters.push(eq(groups.id, meta.groupId));
 
     if (meta.name) groupsFilters.push(eq(groups.name, meta.name));
 
@@ -52,7 +52,7 @@ export class GroupsQueriesRepository {
 
     if (options?.ensureActive) optionsFilters.push(eq(groups.isActive, true));
 
-    if (meta.gropId) groupsFilters.push(eq(groups.id, meta.gropId));
+    if (meta.groupId) groupsFilters.push(eq(groups.id, meta.groupId));
 
     if (meta.name) groupsFilters.push(eq(groups.name, meta.name));
 
