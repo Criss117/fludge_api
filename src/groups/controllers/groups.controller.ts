@@ -20,6 +20,8 @@ import { RemovePermissionsUseCase } from '../usecases/remove-permissions.usecase
 import { AssignEmployeesToGroupUseCase } from '../usecases/assign-employees-to-group.usecase';
 import { RemoveEmployeesFromGroupUseCase } from '../usecases/remove-employees-from-group.usecase';
 import { EnsureEmployeeIdsDto } from '../dtos/ensure-employee-ids.dto';
+import { UpdateGroupDto } from '../dtos/update-group.dto';
+import { UpdateGroupUsecase } from '../usecases/update-group.usecase';
 
 @Controller('businesses/:businessSlug/groups')
 export class GroupsController {
@@ -30,6 +32,7 @@ export class GroupsController {
     private readonly addPermissionsUseCase: AddPermissionsUseCase,
     private readonly assignEmployeesToGroupUseCase: AssignEmployeesToGroupUseCase,
     private readonly removeEmployeesFromGroupUseCase: RemoveEmployeesFromGroupUseCase,
+    private readonly updateGroupUseCase: UpdateGroupUsecase,
   ) {}
 
   @Post()
@@ -58,6 +61,21 @@ export class GroupsController {
     );
 
     return HTTPResponse.ok('Grupo obtenido correctamente', res);
+  }
+
+  @Patch(':groupId')
+  @Permissions('groups:update')
+  public async updateGroup(
+    @GetBusiness('id') businessId: string,
+    @Param('groupId') groupId: string,
+    @Body() values: UpdateGroupDto,
+  ) {
+    await safeAction(
+      () => this.updateGroupUseCase.execute(businessId, groupId, values),
+      'Error al actualizar el grupo',
+    );
+
+    return HTTPResponse.ok('Grupo actualizado correctamente');
   }
 
   @Patch(':groupId/permissions')

@@ -11,6 +11,7 @@ import { RemovePermissionsUseCase } from './usecases/remove-permissions.usecase'
 import { EmployeesGroupsModule } from '@/employees-groups/employees-groups.module';
 import { RemoveEmployeesFromGroupUseCase } from './usecases/remove-employees-from-group.usecase';
 import { AssignEmployeesToGroupUseCase } from './usecases/assign-employees-to-group.usecase';
+import { UpdateGroupUsecase } from './usecases/update-group.usecase';
 
 @Module({
   imports: [BusinessesModule, DbModule, EmployeesGroupsModule],
@@ -23,6 +24,7 @@ import { AssignEmployeesToGroupUseCase } from './usecases/assign-employees-to-gr
     RemovePermissionsUseCase,
     RemoveEmployeesFromGroupUseCase,
     AssignEmployeesToGroupUseCase,
+    UpdateGroupUsecase,
 
     //Repositories
     GroupsQueriesRepository,
