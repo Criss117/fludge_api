@@ -2,20 +2,20 @@ import { DbModule } from '@/db/db.module';
 import { Module } from '@nestjs/common';
 import { EmployeesGroupsQueriesRepository } from './repositories/employees-groups-queries.repository';
 import { EmployeesGroupsCommandsRepository } from './repositories/employees-groups-commands.repository';
-import { AssignGroupsToEmployeeUseCase } from './usecases/assign-groups-to-employee.usecase';
-import { AssignEmployeesToGroupUseCase } from './usecases/assign-employees-to-group.usecase';
+import { DeleteManyEmployeesGroupsUseCase } from './usecases/delete-many-employees-groups.usecase';
+import { SaveManyEmployeesGroupsUseCase } from './usecases/save-many-employees-grouos.usecase';
 
 @Module({
   imports: [DbModule],
   providers: [
     //Use cases
-    AssignGroupsToEmployeeUseCase,
-    AssignEmployeesToGroupUseCase,
+    DeleteManyEmployeesGroupsUseCase,
+    SaveManyEmployeesGroupsUseCase,
 
     //Repositories
     EmployeesGroupsQueriesRepository,
     EmployeesGroupsCommandsRepository,
   ],
-  exports: [AssignGroupsToEmployeeUseCase, AssignEmployeesToGroupUseCase],
+  exports: [DeleteManyEmployeesGroupsUseCase, SaveManyEmployeesGroupsUseCase],
 })
 export class EmployeesGroupsModule {}

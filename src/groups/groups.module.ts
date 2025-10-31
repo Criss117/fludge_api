@@ -8,9 +8,12 @@ import { DbModule } from '@/db/db.module';
 import { FindOneGroupUseCase } from './usecases/find-one-group.usecase';
 import { AddPermissionsUseCase } from './usecases/add-permissions.usecase';
 import { RemovePermissionsUseCase } from './usecases/remove-permissions.usecase';
+import { EmployeesGroupsModule } from '@/employees-groups/employees-groups.module';
+import { RemoveEmployeesFromGroupUseCase } from './usecases/remove-employees-from-group.usecase';
+import { AssignEmployeesToGroupUseCase } from './usecases/assign-employees-to-group.usecase';
 
 @Module({
-  imports: [BusinessesModule, DbModule],
+  imports: [BusinessesModule, DbModule, EmployeesGroupsModule],
   controllers: [GroupsController],
   providers: [
     //Use cases
@@ -18,6 +21,8 @@ import { RemovePermissionsUseCase } from './usecases/remove-permissions.usecase'
     FindOneGroupUseCase,
     AddPermissionsUseCase,
     RemovePermissionsUseCase,
+    RemoveEmployeesFromGroupUseCase,
+    AssignEmployeesToGroupUseCase,
 
     //Repositories
     GroupsQueriesRepository,

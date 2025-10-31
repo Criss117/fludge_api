@@ -1,9 +1,11 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { and, inArray } from 'drizzle-orm';
 import { DBSERVICE, TX, type LibSQLDatabase } from '@/db/db.module';
 import {
   employeeGroups,
   type InsertEmployeeGroup,
 } from '@/shared/dbschemas/employees.schema';
-import { Inject, Injectable } from '@nestjs/common';
+import { DeleteManyEmployeesGroupsDto } from './dtos/delete-many-employees-groups.dto';
 
 type Options = {
   tx?: TX;
@@ -70,5 +72,21 @@ export class EmployeesGroupsCommandsRepository {
         target: [employeeGroups.employeeId, employeeGroups.groupId],
       })
       .returning();
+  }
+
+  public async deleteMany(
+    values: DeleteManyEmployeesGroupsDto,
+    options?: Options,
+  ) {
+    const db = options?.tx ?? this.db;
+
+    await db
+      .delete(employeeGroups)
+      .where(
+        and(
+          inArray(employeeGroups.employeeId, values.employeeIds),
+          inArray(employeeGroups.groupId, values.groupIds),
+        ),
+      );
   }
 }

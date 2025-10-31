@@ -116,7 +116,10 @@ export class GroupsQueriesRepository {
 
     return {
       ...group,
-      employees: employeesInGroup,
+      employees: employeesInGroup.map((e) => ({
+        ...e,
+        user: { ...e.user, password: undefined },
+      })),
     };
   }
 }

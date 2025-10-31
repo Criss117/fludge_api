@@ -3,14 +3,14 @@ import { CreateEmployeeDto } from '../dtos/create-employee.dto';
 import { CreateUserUseCase } from '@/users/usecases/create-user.usecase';
 import { DBSERVICE, type LibSQLDatabase } from '@/db/db.module';
 import { EmployeesCommandsRepository } from '../repositories/employees-commands.repository';
-import { AssignGroupsToEmployeeUseCase } from '@/employees-groups/usecases/assign-groups-to-employee.usecase';
+import { SaveManyEmployeesGroupsUseCase } from '@/employees-groups/usecases/save-many-employees-grouos.usecase';
 
 @Injectable()
 export class CreateEmployeeUseCase {
   constructor(
     @Inject(DBSERVICE) private readonly db: LibSQLDatabase,
     private readonly employeesCommandsRepository: EmployeesCommandsRepository,
-    private readonly assignGroupsToEmployeeUseCase: AssignGroupsToEmployeeUseCase,
+    private readonly saveManyEmployeesGroupsUseCase: SaveManyEmployeesGroupsUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
   ) {}
 
@@ -49,9 +49,11 @@ export class CreateEmployeeUseCase {
 
       if (!values.groupIds?.length) return;
 
-      await this.assignGroupsToEmployeeUseCase.execute(
-        createdEmployee.id,
-        values.groupIds,
+      await this.saveManyEmployeesGroupsUseCase.execute(
+        values.groupIds.map((groupId) => ({
+          employeeId: createdEmployee.id,
+          groupId,
+        })),
         {
           tx,
         },
