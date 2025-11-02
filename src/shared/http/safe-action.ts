@@ -8,8 +8,6 @@ export async function safeAction<T>(
     const res = await action();
     return res;
   } catch (error) {
-    console.error(error);
-
     if (error instanceof HttpException) {
       throw error;
     }
@@ -22,7 +20,7 @@ export async function safeAction<T>(
       ? `${messageError}: ${errorMessage}`
       : errorMessage;
 
-    console.error(finalMessage);
+    console.log(finalMessage);
     throw new InternalServerErrorException(messageError);
   }
 }

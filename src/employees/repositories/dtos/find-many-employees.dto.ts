@@ -1,4 +1,4 @@
 export interface FindManyEmployeesDto {
   businessId: string;
-  userId?: string;
+  employeeId?: string;
 }

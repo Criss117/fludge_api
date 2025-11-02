@@ -28,7 +28,8 @@ export class EmployeesQueriesRepository {
     if (options?.ensureActive)
       optionsFilters.push(eq(employees.isActive, true));
 
-    if (meta.userId) employeesFilters.push(eq(employees.userId, meta.userId));
+    if (meta.employeeId)
+      employeesFilters.push(eq(employees.id, meta.employeeId));
 
     return this.db
       .select({
@@ -57,7 +58,8 @@ export class EmployeesQueriesRepository {
     if (options?.ensureActive)
       optionsFilters.push(eq(employees.isActive, true));
 
-    if (meta.userId) employeesFilters.push(eq(employees.userId, meta.userId));
+    if (meta.employeeId)
+      employeesFilters.push(eq(employees.id, meta.employeeId));
 
     const [employee] = await this.db
       .select({
@@ -125,6 +127,10 @@ export class EmployeesQueriesRepository {
 
     return {
       ...employee,
+      user: {
+        ...employee.user,
+        password: undefined,
+      },
       groups: allEmployeeGroups,
     };
   }
