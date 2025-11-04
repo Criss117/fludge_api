@@ -18,13 +18,13 @@ export class CreateEmployeeUseCase {
     await this.db.transaction(async (tx) => {
       const user = await this.createUserUseCase.execute(
         {
-          email: values.email,
           firstName: values.firstName,
           lastName: values.lastName,
           password: values.password,
           phone: values.phone,
+          isRoot: false,
+          username: values.username,
         },
-        'isEmployee',
         {
           tx,
         },
@@ -42,10 +42,6 @@ export class CreateEmployeeUseCase {
             tx,
           },
         );
-
-      console.log({
-        createdEmployee,
-      });
 
       if (!values.groupIds?.length) return;
 

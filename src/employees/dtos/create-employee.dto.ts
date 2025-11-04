@@ -1,4 +1,5 @@
 import { CreateUserDto } from '@/users/dtos/create-user.dto';
+import { OmitType } from '@nestjs/swagger';
 import {
   IsNumber,
   IsOptional,
@@ -7,7 +8,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
-export class CreateEmployeeDto extends CreateUserDto {
+export class CreateEmployeeDto extends OmitType(CreateUserDto, ['email']) {
   @IsString({ message: 'El nombre de usuario debe ser una cadena de texto' })
   username: string;
 

@@ -48,21 +48,15 @@ export class UsersQueriesRepository {
   ): Promise<UserSummary | null> {
     const filters: SQL[] = [];
 
-    if (meta.id) {
-      filters.push(eq(users.id, meta.id));
-    }
+    if (meta.id) filters.push(eq(users.id, meta.id));
 
-    if (meta.firstName) {
-      filters.push(eq(users.firstName, meta.firstName));
-    }
+    if (meta.firstName) filters.push(eq(users.firstName, meta.firstName));
 
-    if (meta.lastName) {
-      filters.push(eq(users.lastName, meta.lastName));
-    }
+    if (meta.lastName) filters.push(eq(users.lastName, meta.lastName));
 
-    if (meta.email) {
-      filters.push(eq(users.email, meta.email));
-    }
+    if (meta.email) filters.push(eq(users.email, meta.email));
+
+    if (meta.username) filters.push(eq(users.username, meta.username));
 
     const [user] = await this.db
       .select()
