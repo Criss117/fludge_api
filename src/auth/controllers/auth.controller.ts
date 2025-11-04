@@ -13,6 +13,7 @@ import type { UserDetail } from '@/shared/entities/user.entity';
 import { GetSession } from '../decorators/get-session.decorator';
 import { SignOutUseCase } from '../usecases/sign-out.usecase';
 import { CloseAllSessionUseCase } from '../usecases/close-all-session.usecase';
+import { SignInEmployeeDto } from '../dtos/sign-in-employee.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -48,7 +49,35 @@ export class AuthController {
     const userAgent = request.headers['user-agent'];
 
     const session = await safeAction(
-      () => this.signInUseCase.execute(values, { userAgent }),
+      () => this.signInUseCase.rootUser(values, { userAgent }),
+      'Error al iniciar sesión',
+    );
+
+    response.cookie(authCookieName, session.token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: true,
+      maxAge: session.expiresAt.getTime() - Date.now(),
+      expires: session.expiresAt,
+    });
+
+    return HTTPResponse.ok('Sesión iniciada correctamente', session);
+  }
+
+  @Post('sign-in-employee')
+  @Public()
+  public async signInEmployee(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+    @Body() values: SignInEmployeeDto,
+  ) {
+    const authCookieName =
+      this.configService.getOrThrow<string>('AUTH_COOKIE_NAME');
+
+    const userAgent = request.headers['user-agent'];
+
+    const session = await safeAction(
+      () => this.signInUseCase.employeeUser(values, { userAgent }),
       'Error al iniciar sesión',
     );
 
