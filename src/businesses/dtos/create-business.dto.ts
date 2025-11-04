@@ -12,20 +12,17 @@ export class CreateBusinessDto {
   @Transform(({ value }) => value?.trim())
   nit: string;
 
-  @IsOptional()
   @IsEmail({}, { message: 'Debe proporcionar un correo electrónico válido' })
   @Transform(({ value }) => value?.trim())
-  email?: string | null;
+  email: string;
 
-  @IsOptional()
   @IsString({ message: 'El teléfono debe ser una cadena de texto' })
   @Transform(({ value }) => value?.trim())
-  phone?: string | null;
+  phone: string;
 
-  @IsOptional()
   @IsString({ message: 'La razón social debe ser una cadena de texto' })
   @Transform(({ value }) => value?.trim())
-  legalName?: string | null;
+  legalName: string;
 
   @IsOptional()
   @IsString({ message: 'La dirección debe ser una cadena de texto' })

@@ -6,11 +6,11 @@ import type { UserSummary } from './user.entity';
 export interface BusinessSummary extends AuditMetadata {
   id: string;
   name: string;
-  slug: string;
-  email: string | null;
-  phone: string | null;
+  email: string;
+  phone: string;
   rootUserId: string;
-  legalName: string | null;
+  slug: string;
+  legalName: string;
   nit: string;
   address: string | null;
 }

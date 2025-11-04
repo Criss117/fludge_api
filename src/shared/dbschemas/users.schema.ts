@@ -9,7 +9,8 @@ export const users = sqliteTable(
     id: UUIDv4(),
     firstName: text('first_name').notNull(),
     lastName: text('last_name').notNull(),
-    email: text('email').notNull().unique(),
+    email: text('email').unique(),
+    username: text('username').unique(),
     phone: text('phone'),
     emailVerified: integer('email_verified', { mode: 'boolean' })
       .default(false)

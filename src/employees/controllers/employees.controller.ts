@@ -61,7 +61,7 @@ export class EmployeesController {
       ),
     );
 
-    return HTTPResponse.created('Grupos asignados correctamente');
+    return HTTPResponse.created('Grupos asignados correctamente', null);
   }
 
   @Delete(':employeeId/groups')
@@ -79,6 +79,6 @@ export class EmployeesController {
       ),
     );
 
-    return HTTPResponse.ok('Grupos eliminados correctamente');
+    return HTTPResponse.ok('Grupos eliminados correctamente', null);
   }
 }

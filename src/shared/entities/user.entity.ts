@@ -7,10 +7,11 @@ export interface UserSummary extends AuditMetadata {
   id: string;
   firstName: string;
   lastName: string;
-  email: string;
-  password?: string;
-  emailVerified: boolean;
+  email: string | null;
+  username: string | null;
   phone: string | null;
+  emailVerified: boolean;
+  password?: string | null;
   isRoot: boolean;
 }
 

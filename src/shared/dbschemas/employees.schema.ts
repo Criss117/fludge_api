@@ -21,6 +21,7 @@ export const employees = sqliteTable('employees', {
     mode: 'timestamp',
   }).notNull(),
   salary: integer('salary').notNull(),
+  email: text('email'),
   ...auditMetadata,
 });
 

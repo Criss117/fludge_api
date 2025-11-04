@@ -8,6 +8,7 @@ export interface EmployeeSummary extends AuditMetadata {
   userId: string;
   hireDate: Date;
   salary: number;
+  email: string | null;
   user: UserSummary;
 }
 
