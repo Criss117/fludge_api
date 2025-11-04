@@ -119,36 +119,35 @@ export class UsersQueriesRepository {
       };
     }
 
-    const employeeInBusinessePromise = this.db
+    const [employeeInfo] = await this.db
       .select({
-        ...getTableColumns(businesses),
+        ...getTableColumns(employees),
+        business: getTableColumns(businesses),
       })
       .from(employees)
       .innerJoin(businesses, eq(businesses.id, employees.businessId))
       .where(and(eq(employees.userId, user.id), ...employeesFilters));
 
-    const employeeGroupsPromise = this.db
+    const allEmployeeGroups = await this.db
       .select({
         ...getTableColumns(groups),
       })
       .from(employeeGroups)
       .innerJoin(groups, eq(groups.id, employeeGroups.groupId))
       .where(
-        and(eq(employeeGroups.employeeId, user.id), ...employeeGroupsFilters),
+        and(
+          eq(employeeGroups.employeeId, employeeInfo.id),
+          ...employeeGroupsFilters,
+        ),
       );
-
-    const [[employeeInBusiness], employeeGroup] = await Promise.all([
-      employeeInBusinessePromise,
-      employeeGroupsPromise,
-    ]);
 
     return {
       ...user,
       password: options?.withPassword ? user.password : undefined,
       sessions: userSessions,
       isEmployeeIn: {
-        ...employeeInBusiness,
-        groups: employeeGroup,
+        ...employeeInfo.business,
+        groups: allEmployeeGroups,
       },
     };
   }
