@@ -20,7 +20,9 @@ export class FindOneBusinessUseCase {
     if (!business) throw new BusinessNotFoundException();
 
     //TODO: Check if user is root or employee
-    const logedUserIsRootOrEmployee = business.rootUserId === loggedUserId;
+    const logedUserIsRootOrEmployee =
+      business.rootUserId === loggedUserId ||
+      business.employees.some((employee) => employee.userId === loggedUserId);
 
     if (!logedUserIsRootOrEmployee) throw new UserCanNotAccessException();
 

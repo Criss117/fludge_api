@@ -4,14 +4,16 @@ export const resources = [
   'products',
   'providers',
   'clients',
-  'businesses',
 ] as const;
 export const actions = ['create', 'read', 'update', 'delete'] as const;
 
 export type Resource = (typeof resources)[number];
 export type Action = (typeof actions)[number];
 
-export type Permission = `${Resource}:${Action}`;
+export type Permission =
+  | `${Resource}:${Action}`
+  | 'businesses:update'
+  | 'businesses:read';
 
 export const allPermission: Permission[] = [
   'employees:create',
@@ -38,4 +40,6 @@ export const allPermission: Permission[] = [
   'clients:read',
   'clients:update',
   'clients:delete',
+
+  'businesses:update',
 ] as const;

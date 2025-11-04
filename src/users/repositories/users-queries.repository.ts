@@ -124,7 +124,7 @@ export class UsersQueriesRepository {
         ...getTableColumns(businesses),
       })
       .from(employees)
-      .innerJoin(businesses, eq(businesses.id, employees.id))
+      .innerJoin(businesses, eq(businesses.id, employees.businessId))
       .where(and(eq(employees.userId, user.id), ...employeesFilters));
 
     const employeeGroupsPromise = this.db

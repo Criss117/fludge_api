@@ -9,7 +9,7 @@ import type { FindManyBusinessesDto } from './dtos/find-many-businesses.dto';
 import { businesses } from '@/shared/dbschemas/businesses.schema';
 import { FindOneBusinessDto } from './dtos/find-one-business.dto';
 import { users } from '@/shared/dbschemas';
-import { employees } from '@/shared/dbschemas/employees.schema';
+import { employeeGroups, employees } from '@/shared/dbschemas/employees.schema';
 import { groups } from '@/shared/dbschemas/groups.schema';
 import { EmployeeDetail } from '@/shared/entities/employee.entity';
 
@@ -117,10 +117,13 @@ export class BusinessesQueriesRepository {
     const businessEmployeesPromise = this.db
       .select({
         ...getTableColumns(employees),
-        user: { ...getTableColumns(users), password: sql<undefined>`NULL` },
+        user: getTableColumns(users),
+        groups: getTableColumns(groups),
       })
       .from(employees)
       .innerJoin(users, eq(users.id, employees.userId))
+      .leftJoin(employeeGroups, eq(employeeGroups.employeeId, employees.id))
+      .leftJoin(groups, eq(groups.id, employeeGroups.groupId))
       .where(and(eq(employees.businessId, business.id), ...employeesFilters));
 
     const [businessGroups, businessEmployees] = await Promise.all([
@@ -128,10 +131,30 @@ export class BusinessesQueriesRepository {
       businessEmployeesPromise,
     ]);
 
+    const employeesReduced = new Map<string, EmployeeDetail>();
+
+    for (const employee of businessEmployees) {
+      const existingEmployee = employeesReduced.get(employee.id);
+
+      if (existingEmployee && employee.groups) {
+        existingEmployee.groups.push(employee.groups);
+        continue;
+      }
+
+      employeesReduced.set(employee.id, {
+        ...employee,
+        groups: employee.groups ? [employee.groups] : [],
+        user: {
+          ...employee.user,
+          password: undefined,
+        },
+      });
+    }
+
     return {
       ...business,
+      employees: Array.from(employeesReduced.values()),
       groups: businessGroups,
-      employees: businessEmployees as unknown as EmployeeDetail[],
     };
   }
 }

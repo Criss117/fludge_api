@@ -33,9 +33,6 @@ export class PermissionsGuard implements CanActivate {
       context.getHandler(),
     );
 
-    if (!permissions.length)
-      throw new InternalServerErrorException('Permisos no encontrados');
-
     const user = req.user as UserDetail;
     const businessSlug = req.params.businessSlug as string;
 
@@ -52,7 +49,7 @@ export class PermissionsGuard implements CanActivate {
 
     const userIsRootOrEmployeeInBusiness =
       business.rootUserId === user.id ||
-      business.employees.some((e) => e.id === user.id);
+      business.employees.some((e) => e.userId === user.id);
 
     if (!userIsRootOrEmployeeInBusiness)
       throw new UserNotRootOrEmployeeException();
@@ -60,18 +57,22 @@ export class PermissionsGuard implements CanActivate {
     req.business = business;
 
     if (user.isRoot) return true;
-    //Here the user is an employee in the business
 
-    const permissionsWitoutBusinesses = permissions.filter((p) =>
-      p.includes('businesses'),
+    //Here the user is an employee in the business
+    const permissionsWitoutBusinesses = permissions.filter(
+      (p) => p !== 'businesses:read',
     );
 
+    // The permissions required are only businesses:read o nothing
+    if (!permissionsWitoutBusinesses.length) return true;
+
+    // Exists a permission that requires the user to be in the business
     const userPermissions = user.isEmployeeIn?.groups.map((g) => g.permissions);
 
     if (!userPermissions?.length)
       throw new ForbiddenException('No tiene permisos para hacer esto');
 
-    const userHasPermissions = permissionsWitoutBusinesses.some((p) =>
+    const userHasPermissions = permissionsWitoutBusinesses.every((p) =>
       userPermissions.some((up) => up.includes(p)),
     );
 
