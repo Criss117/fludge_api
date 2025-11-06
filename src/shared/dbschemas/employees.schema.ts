@@ -1,14 +1,16 @@
-import { sqliteTable } from 'drizzle-orm/sqlite-core';
-import { integer } from 'drizzle-orm/sqlite-core';
+import {
+  sqliteTable,
+  text,
+  integer,
+  index,
+  primaryKey,
+  unique,
+} from 'drizzle-orm/sqlite-core';
 import { UUIDv4 } from './utils/uuid';
 import { auditMetadata } from './utils/audit-metadata';
-import { text } from 'drizzle-orm/sqlite-core';
 import { businesses } from './businesses.schema';
 import { users } from './users.schema';
-import { primaryKey } from 'drizzle-orm/sqlite-core';
-import { unique } from 'drizzle-orm/sqlite-core';
 import { groups } from './groups.schema';
-import { index } from 'drizzle-orm/sqlite-core';
 
 export const employees = sqliteTable(
   'employees',

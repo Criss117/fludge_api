@@ -1,12 +1,14 @@
-import { sqliteTable } from 'drizzle-orm/sqlite-core';
+import {
+  sqliteTable,
+  text,
+  integer,
+  index,
+  unique,
+} from 'drizzle-orm/sqlite-core';
 import { UUIDv4 } from './utils/uuid';
-import { text } from 'drizzle-orm/sqlite-core';
 import { businesses } from './businesses.schema';
-import { integer } from 'drizzle-orm/sqlite-core';
 import { auditMetadata } from './utils/audit-metadata';
 import type { Permission } from '../entities/permissions';
-import { index } from 'drizzle-orm/sqlite-core';
-import { unique } from 'drizzle-orm/sqlite-core';
 
 export const groups = sqliteTable(
   'groups',

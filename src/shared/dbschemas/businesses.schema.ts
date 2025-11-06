@@ -1,7 +1,6 @@
-import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, index } from 'drizzle-orm/sqlite-core';
 import { UUIDv4 } from './utils/uuid';
 import { users } from './users.schema';
-import { index } from 'drizzle-orm/sqlite-core';
 import { auditMetadata } from './utils/audit-metadata';
 
 export const businesses = sqliteTable(

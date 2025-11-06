@@ -1,6 +1,5 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { auditMetadata } from './utils/audit-metadata';
-import { index } from 'drizzle-orm/sqlite-core';
 import { UUIDv4 } from './utils/uuid';
 
 export const users = sqliteTable(
