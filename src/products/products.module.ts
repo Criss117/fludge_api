@@ -9,6 +9,7 @@ import { ProductsCommandsRepository } from './repositories/products-commands.rep
 import { ProductsQueriesRepository } from './repositories/products-queries.repository';
 import { CreateProductUsecase } from './usecases/create-product.usecase';
 import { ProductsController } from './controllers/products.controller';
+import { FindOneProductUsecase } from './usecases/find-one-product.usecase';
 
 @Module({
   imports: [DbModule, BusinessesModule],
@@ -17,6 +18,7 @@ import { ProductsController } from './controllers/products.controller';
     // - Products
     // Usecases
     CreateProductUsecase,
+    FindOneProductUsecase,
 
     // Repositories
     ProductsCommandsRepository,
