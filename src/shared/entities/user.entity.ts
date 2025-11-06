@@ -1,6 +1,6 @@
 import type { AuditMetadata } from './audit-metadata';
 import type { BusinessSummary } from './business.entity';
-import type { GroupSummary } from './group.entity';
+import type { EmployeeDetail } from './employee.entity';
 import type { SessionSummary } from './session.entity';
 
 export interface UserSummary extends AuditMetadata {
@@ -18,5 +18,6 @@ export interface UserSummary extends AuditMetadata {
 export interface UserDetail extends UserSummary {
   sessions: SessionSummary[];
   isRootIn?: BusinessSummary[];
-  isEmployeeIn?: BusinessSummary & { groups: GroupSummary[] };
+  employeeDetail?: Omit<EmployeeDetail, 'user'>;
+  isEmployeeIn?: BusinessSummary;
 }

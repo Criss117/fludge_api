@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq, or, type SQL, and, getTableColumns, sql } from 'drizzle-orm';
+import { eq, or, type SQL, and, getTableColumns } from 'drizzle-orm';
 import { DBSERVICE, type LibSQLDatabase } from '@/db/db.module';
 import type {
   BusinessDetail,
@@ -9,9 +9,8 @@ import type { FindManyBusinessesDto } from './dtos/find-many-businesses.dto';
 import { businesses } from '@/shared/dbschemas/businesses.schema';
 import { FindOneBusinessDto } from './dtos/find-one-business.dto';
 import { users } from '@/shared/dbschemas';
-import { employeeGroups, employees } from '@/shared/dbschemas/employees.schema';
+import { employees } from '@/shared/dbschemas/employees.schema';
 import { groups } from '@/shared/dbschemas/groups.schema';
-import { EmployeeDetail } from '@/shared/entities/employee.entity';
 
 type Options = {
   ensureActive?: boolean;
@@ -98,62 +97,44 @@ export class BusinessesQueriesRepository {
 
     if (meta.id) filters.push(eq(businesses.id, meta.id));
 
-    const [business] = await this.db
+    const selectBusiness = await this.db
       .select({
         ...getTableColumns(businesses),
-        rootUser: { ...getTableColumns(users), password: sql<undefined>`NULL` },
+        rootUser: getTableColumns(users),
+        group: getTableColumns(groups),
       })
       .from(businesses)
       .innerJoin(users, eq(users.id, businesses.rootUserId))
+      .leftJoin(groups, eq(groups.businessId, businesses.id))
       .where(and(...filters, ...optionsFilters));
 
-    if (!business) return null;
+    if (!selectBusiness || !selectBusiness.length) return null;
 
-    const businessGroupsPromise = this.db
-      .select()
-      .from(groups)
-      .where(and(eq(groups.businessId, business.id), ...groupsFilters));
+    const businessGroups: BusinessDetail['groups'] = [];
+    const business = { ...selectBusiness[0], group: undefined };
+
+    for (const business of selectBusiness) {
+      if (business.group) businessGroups.push(business.group);
+    }
 
     const businessEmployeesPromise = this.db
       .select({
         ...getTableColumns(employees),
         user: getTableColumns(users),
-        groups: getTableColumns(groups),
       })
       .from(employees)
       .innerJoin(users, eq(users.id, employees.userId))
-      .leftJoin(employeeGroups, eq(employeeGroups.employeeId, employees.id))
-      .leftJoin(groups, eq(groups.id, employeeGroups.groupId))
       .where(and(eq(employees.businessId, business.id), ...employeesFilters));
 
-    const [businessGroups, businessEmployees] = await Promise.all([
-      businessGroupsPromise,
-      businessEmployeesPromise,
-    ]);
-
-    const employeesReduced = new Map<string, EmployeeDetail>();
-
-    for (const employee of businessEmployees) {
-      const existingEmployee = employeesReduced.get(employee.id);
-
-      if (existingEmployee && employee.groups) {
-        existingEmployee.groups.push(employee.groups);
-        continue;
-      }
-
-      employeesReduced.set(employee.id, {
-        ...employee,
-        groups: employee.groups ? [employee.groups] : [],
-        user: {
-          ...employee.user,
-          password: undefined,
-        },
-      });
-    }
+    const [businessEmployees] = await Promise.all([businessEmployeesPromise]);
 
     return {
       ...business,
-      employees: Array.from(employeesReduced.values()),
+      rootUser: {
+        ...business.rootUser,
+        password: undefined,
+      },
+      employees: businessEmployees,
       groups: businessGroups,
     };
   }

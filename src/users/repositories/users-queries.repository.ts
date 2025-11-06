@@ -83,7 +83,7 @@ export class UsersQueriesRepository {
       employeesFilters.push(eq(employees.isActive, true));
     }
 
-    const arrayUser = await this.db
+    const selectUserResult = await this.db
       .select({
         ...getTableColumns(users),
         sessions: getTableColumns(sessions),
@@ -95,13 +95,13 @@ export class UsersQueriesRepository {
       )
       .where(eq(users.id, userId));
 
-    if (!arrayUser || !arrayUser.length) return null;
+    if (!selectUserResult || !selectUserResult.length) return null;
 
-    const user = arrayUser[0];
+    const user = selectUserResult[0];
 
     const userSessions: SessionSummary[] = [];
 
-    for (const user of arrayUser) {
+    for (const user of selectUserResult) {
       if (user.sessions) userSessions.push(user.sessions);
     }
 
@@ -121,7 +121,7 @@ export class UsersQueriesRepository {
 
     const [employeeInfo] = await this.db
       .select({
-        ...getTableColumns(employees),
+        employee: getTableColumns(employees),
         business: getTableColumns(businesses),
       })
       .from(employees)
@@ -136,7 +136,7 @@ export class UsersQueriesRepository {
       .innerJoin(groups, eq(groups.id, employeeGroups.groupId))
       .where(
         and(
-          eq(employeeGroups.employeeId, employeeInfo.id),
+          eq(employeeGroups.employeeId, employeeInfo.employee.id),
           ...employeeGroupsFilters,
         ),
       );
@@ -145,8 +145,9 @@ export class UsersQueriesRepository {
       ...user,
       password: options?.withPassword ? user.password : undefined,
       sessions: userSessions,
-      isEmployeeIn: {
-        ...employeeInfo.business,
+      isEmployeeIn: employeeInfo.business,
+      employeeDetail: {
+        ...employeeInfo.employee,
         groups: allEmployeeGroups,
       },
     };

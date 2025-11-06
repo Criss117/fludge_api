@@ -67,7 +67,9 @@ export class PermissionsGuard implements CanActivate {
     if (!permissionsWitoutBusinesses.length) return true;
 
     // Exists a permission that requires the user to be in the business
-    const userPermissions = user.isEmployeeIn?.groups.map((g) => g.permissions);
+    const userPermissions = user.employeeDetail?.groups.map(
+      (g) => g.permissions,
+    );
 
     if (!userPermissions?.length)
       throw new ForbiddenException('No tiene permisos para hacer esto');
