@@ -150,7 +150,7 @@ export class SeedService {
                 lastName,
               })
             : undefined,
-          isRoot: faker.datatype.boolean(),
+          isRoot,
           phone: faker.phone.number(),
         };
       },
