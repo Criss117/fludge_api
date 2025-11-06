@@ -9,6 +9,7 @@ import { GroupsModule } from './groups/groups.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EmployeesModule } from './employees/employees.module';
 import { EmployeesGroupsModule } from './employees-groups/employees-groups.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { EmployeesGroupsModule } from './employees-groups/employees-groups.modul
     GroupsModule,
     EmployeesModule,
     EmployeesGroupsModule,
+    ProductsModule,
   ],
   controllers: [AppController],
 })

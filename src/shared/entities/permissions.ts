@@ -3,6 +3,7 @@ export const resources = [
   'groups',
   'products',
   'providers',
+  'categories',
   'clients',
 ] as const;
 export const actions = ['create', 'read', 'update', 'delete'] as const;
@@ -40,6 +41,11 @@ export const allPermission: Permission[] = [
   'clients:read',
   'clients:update',
   'clients:delete',
+
+  'categories:create',
+  'categories:read',
+  'categories:update',
+  'categories:delete',
 
   'businesses:update',
 ] as const;
