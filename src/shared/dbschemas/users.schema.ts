@@ -21,6 +21,8 @@ export const users = sqliteTable(
   },
   (t) => [
     index('users_first_name_last_name_index').on(t.firstName, t.lastName),
+    index('users_username_index').on(t.username),
+    index('users_email_index').on(t.email),
   ],
 );
 

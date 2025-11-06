@@ -8,30 +8,48 @@ import { users } from './users.schema';
 import { primaryKey } from 'drizzle-orm/sqlite-core';
 import { unique } from 'drizzle-orm/sqlite-core';
 import { groups } from './groups.schema';
+import { index } from 'drizzle-orm/sqlite-core';
 
-export const employees = sqliteTable('employees', {
-  id: UUIDv4(),
-  businessId: text('business_id')
-    .references(() => businesses.id)
-    .notNull(),
-  userId: text('user_id')
-    .references(() => users.id)
-    .notNull(),
-  hireDate: integer('hire_date', {
-    mode: 'timestamp',
-  }).notNull(),
-  salary: integer('salary').notNull(),
-  email: text('email'),
-  ...auditMetadata,
-});
+export const employees = sqliteTable(
+  'employees',
+  {
+    id: UUIDv4(),
+    businessId: text('business_id', {
+      length: 36,
+    })
+      .references(() => businesses.id)
+      .notNull(),
+    userId: text('user_id', {
+      length: 36,
+    })
+      .references(() => users.id)
+      .notNull(),
+    hireDate: integer('hire_date', {
+      mode: 'timestamp',
+    }).notNull(),
+    salary: integer('salary').notNull(),
+    email: text('email', {
+      length: 255,
+    }),
+    ...auditMetadata,
+  },
+  (t) => [
+    index('employees_business_id_idx').on(t.businessId),
+    index('employees_user_id_idx').on(t.userId),
+  ],
+);
 
 export const employeeGroups = sqliteTable(
   'employee_groups',
   {
-    employeeId: text('employee_id')
+    employeeId: text('employee_id', {
+      length: 36,
+    })
       .references(() => employees.id)
       .notNull(),
-    groupId: text('group_id')
+    groupId: text('group_id', {
+      length: 36,
+    })
       .references(() => groups.id)
       .notNull(),
     ...auditMetadata,
