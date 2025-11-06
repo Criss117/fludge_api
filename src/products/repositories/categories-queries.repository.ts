@@ -8,6 +8,7 @@ import {
   or,
   type SQL,
 } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/sqlite-core';
 import { DBSERVICE, type LibSQLDatabase } from '@/db/db.module';
 import type {
   CategoryDetail,
@@ -16,7 +17,6 @@ import type {
 import { FindManyCategoriesByDto } from './dtos/find-many-categories-by.dto';
 import { categories } from '@/shared/dbschemas/categories.schema';
 import { FindOneCategoryDto } from './dtos/find-one-category.dto';
-import { alias } from 'drizzle-orm/sqlite-core';
 
 type Options = {
   ensureActive?: boolean;
@@ -44,7 +44,13 @@ export class CategoriesQueriesRepository {
     const selectedCategories = await this.db
       .select()
       .from(categories)
-      .where(and(or(...categoriesFilter), ...optionsFilter))
+      .where(
+        and(
+          eq(categories.businessId, meta.businessId),
+          or(...categoriesFilter),
+          ...optionsFilter,
+        ),
+      )
       .orderBy(desc(categories.createdAt));
 
     return selectedCategories;
@@ -68,7 +74,13 @@ export class CategoriesQueriesRepository {
     const [selectedCategory] = await this.db
       .select()
       .from(categories)
-      .where(and(...categoriesFilter, ...optionsFilter));
+      .where(
+        and(
+          eq(categories.businessId, meta.businessId),
+          ...categoriesFilter,
+          ...optionsFilter,
+        ),
+      );
 
     if (!selectedCategory) return null;
 
@@ -99,7 +111,13 @@ export class CategoriesQueriesRepository {
       })
       .from(categories)
       .leftJoin(parentCategory, eq(parentCategory.id, categories.parentId))
-      .where(and(...categoriesFilter, ...optionsFilter));
+      .where(
+        and(
+          eq(categories.businessId, meta.businessId),
+          ...categoriesFilter,
+          ...optionsFilter,
+        ),
+      );
 
     if (!selectedCategory) return null;
 

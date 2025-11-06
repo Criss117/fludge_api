@@ -5,13 +5,25 @@ import { CategoriesCommandsRepository } from './repositories/categories-commands
 import { CategoriesQueriesRepository } from './repositories/categories-queries.repository';
 import { CreateCategoryUsecase } from './usecases/create-category.usecase';
 import { CategoriesController } from './controllers/categories.controller';
+import { ProductsCommandsRepository } from './repositories/products-commands.repository';
+import { ProductsQueriesRepository } from './repositories/products-queries.repository';
+import { CreateProductUsecase } from './usecases/create-product.usecase';
+import { ProductsController } from './controllers/products.controller';
 
 @Module({
   imports: [DbModule, BusinessesModule],
-  controllers: [CategoriesController],
+  controllers: [CategoriesController, ProductsController],
   providers: [
+    // - Products
     // Usecases
+    CreateProductUsecase,
+
+    // Repositories
+    ProductsCommandsRepository,
+    ProductsQueriesRepository,
+
     // - Categories
+    // Usecases
     CreateCategoryUsecase,
 
     // Repositories

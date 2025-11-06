@@ -8,8 +8,6 @@ export async function safeAction<T>(
     const res = await action();
     return res;
   } catch (error) {
-    console.log({ error });
-
     if (error instanceof HttpException) {
       throw error;
     }
