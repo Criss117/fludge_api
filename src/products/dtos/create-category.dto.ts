@@ -24,7 +24,7 @@ export class CreateCategoryBase {
 }
 
 export class CreateCategoryDto extends CreateCategoryBase {
-  @IsUUID('4', { message: 'El ID del padre debe ser un UUID válido' })
+  @IsUUID(7, { message: 'El ID del padre debe ser un UUID válido' })
   @IsOptional()
   parentId?: string | null | undefined;
 

@@ -77,7 +77,7 @@ export class CreateProductDto {
   description?: string | null;
 
   @IsOptional()
-  @IsUUID('4', {
+  @IsUUID(7, {
     message: 'La categoría del producto debe de ser un uuid válido',
   })
   @Transform(({ value }) => value?.trim())

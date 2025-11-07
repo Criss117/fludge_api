@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class EnsureGroupIdsDto {
-  @IsUUID('4', {
+  @IsUUID(7, {
     each: true,
     message: 'Los ids de grupo deben ser UUID v4',
   })

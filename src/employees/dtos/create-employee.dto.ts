@@ -16,7 +16,7 @@ export class CreateEmployeeDto extends OmitType(CreateUserDto, ['email']) {
   @IsPositive({ message: 'El salario debe ser mayor o igual a 0' })
   salary: number;
 
-  @IsUUID(4, { message: 'Los grupos deben ser UUID v4', each: true })
+  @IsUUID(7, { message: 'Los grupos deben ser UUID v4', each: true })
   @IsOptional()
   groupIds?: string[];
 }
