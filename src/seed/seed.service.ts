@@ -132,6 +132,16 @@ export class SeedService {
   private async seedUsers(totalUsers = 10) {
     const password = await hash('holiwiss');
 
+    const myUser: InsertUser = {
+      firstName: 'Cristian',
+      lastName: 'Cristian',
+      password,
+      email: 'cristian@fludge.dev',
+      username: 'cristian',
+      isRoot: true,
+      phone: '+56 999 999 999',
+    };
+
     const fakerUsers: InsertUser[] = Array.from({ length: totalUsers }).map(
       (_, index) => {
         const firstName = faker.person.firstName();
@@ -156,10 +166,28 @@ export class SeedService {
       },
     );
 
-    return this.db.insert(users).values(fakerUsers).returning();
+    return this.db
+      .insert(users)
+      .values([...fakerUsers, myUser])
+      .returning();
   }
 
   private async seedBusinesses(rootUsers: SelectUser[], totalBusinesses = 10) {
+    const myUserId = rootUsers.find(
+      (user) => user.email === 'cristian@fludge.dev',
+    )!.id;
+
+    const myBusiness: InsertBusiness = {
+      name: 'Tienda Andres',
+      slug: 'tienda-andres',
+      email: 'tienda-andres@fludge.dev',
+      legalName: 'Tienda Andres S.A.',
+      phone: '+56 999 999 999',
+      address: 'Av. de la Independencia 123',
+      nit: '12345678',
+      rootUserId: myUserId,
+    };
+
     const fakerBusinesses: InsertBusiness[] = Array.from({
       length: totalBusinesses,
     }).map(() => {
@@ -178,7 +206,10 @@ export class SeedService {
       };
     });
 
-    return this.db.insert(businesses).values(fakerBusinesses).returning();
+    return this.db
+      .insert(businesses)
+      .values([...fakerBusinesses, myBusiness])
+      .returning();
   }
 
   private async seedGroups(
@@ -309,6 +340,8 @@ export class SeedService {
 
       const purchasePrice = faker.number.int({ min: 100, max: 10000 });
 
+      const createdAt = faker.date.past();
+
       return {
         businessId,
         name: productName,
@@ -323,6 +356,8 @@ export class SeedService {
         offerPrice: Math.round(purchasePrice * 0.2),
         wholesalePrice: Math.round(purchasePrice * 0.15),
         allowNegativeStock: faker.datatype.boolean(),
+        createdAt,
+        updatedAt: createdAt,
       };
     });
 

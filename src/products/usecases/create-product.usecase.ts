@@ -29,7 +29,11 @@ export class CreateProductUsecase {
         slug: productSlug,
       },
       {
+        limit: 1,
+      },
+      {
         ensureActive: true,
+        cursor: null,
       },
     );
 

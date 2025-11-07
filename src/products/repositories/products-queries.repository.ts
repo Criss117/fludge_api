@@ -1,5 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, desc, eq, getTableColumns, like, or, SQL } from 'drizzle-orm';
+import {
+  and,
+  desc,
+  eq,
+  getTableColumns,
+  like,
+  lte,
+  or,
+  SQL,
+} from 'drizzle-orm';
 import { DBSERVICE, type LibSQLDatabase } from '@/db/db.module';
 import { FindManyProductsByDto } from './dtos/find-many-products-by.dto';
 import { products } from '@/shared/dbschemas/products.schema';
@@ -11,8 +20,17 @@ import { FindOneProductDto } from './dtos/find-one-product.dto';
 import { businesses } from '@/shared/dbschemas/businesses.schema';
 import { categories } from '@/shared/dbschemas/categories.schema';
 
+type Cursor = {
+  lastCreatedAt: Date;
+  lastProductId: string;
+};
+
 type Options = {
   ensureActive?: boolean;
+};
+
+type ShortOptions = {
+  limit: number;
 };
 
 @Injectable()
@@ -21,7 +39,10 @@ export class ProductsQueriesRepository {
 
   public async findManyBy(
     meta: FindManyProductsByDto,
-    options?: Options,
+    shortOptions: ShortOptions,
+    options?: Options & {
+      cursor: Cursor | null;
+    },
   ): Promise<ProductSummary[]> {
     const optionsFilters: SQL[] = [];
     const productsFilters: SQL[] = [];
@@ -50,10 +71,20 @@ export class ProductsQueriesRepository {
       .where(
         and(
           eq(products.businessId, meta.businessId),
+          options?.cursor
+            ? or(
+                lte(products.createdAt, options.cursor.lastCreatedAt),
+                and(
+                  eq(products.createdAt, options.cursor.lastCreatedAt),
+                  lte(products.id, options.cursor.lastProductId),
+                ),
+              )
+            : undefined,
           or(...productsFilters),
           ...optionsFilters,
         ),
       )
+      .limit(shortOptions.limit)
       .orderBy(desc(products.createdAt));
   }
 
