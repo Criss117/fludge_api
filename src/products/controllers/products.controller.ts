@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CreateProductUsecase } from '../usecases/create-product.usecase';
 import { Permissions } from '@/auth/decorators/permissions.decorator';
 import { GetBusiness } from '@/auth/decorators/get-business.decorator';
@@ -7,6 +15,8 @@ import { safeAction } from '@/shared/http/safe-action';
 import { HTTPResponse } from '@/shared/http/common.response';
 import { FindOneProductUsecase } from '../usecases/find-one-product.usecase';
 import { FindManyProductsUsecase } from '../usecases/find-many-products.usecase';
+import type { ProductCursor } from '@/shared/entities/cursor.entity';
+import { ProductsCursorPipe } from '../dtos/products-cursor.pipe';
 
 @Controller('businesses/:businessSlug/products')
 export class ProductsController {
@@ -55,37 +65,25 @@ export class ProductsController {
   @Permissions('products:read')
   public async findMany(
     @GetBusiness('id') businessId: string,
-    @Query('limit') limit?: string,
-    @Query('lastCreatedAt') lastCreatedAt?: string,
-    @Query('lastProductId') lastProductId?: string,
+    @Query('limit', ParseIntPipe) limit = 50,
+    @Query('nextCursor', ProductsCursorPipe) cursor?: ProductCursor,
   ) {
-    const cursor =
-      lastCreatedAt && lastProductId
-        ? {
-            lastCreatedAt: new Date(lastCreatedAt),
-            lastProductId,
-          }
-        : null;
-
-    console.log({
-      cursor,
-    });
-
     const response = await safeAction(
       () =>
-        this.findManyProductsUsecase.execute(
-          businessId,
-          Number.parseInt(limit ?? '50'),
-          {
-            cursor,
-          },
-        ),
+        this.findManyProductsUsecase.execute(businessId, {
+          limit,
+          cursor: cursor ?? null,
+        }),
       'No se pudieron obtener los productos',
     );
 
-    return HTTPResponse.ok(
-      'Los productos se han obtenido correctamente',
-      response,
-    );
+    const base64Cursor = Buffer.from(
+      JSON.stringify(response.nextCursor),
+    ).toString('base64');
+
+    return HTTPResponse.ok('Los productos se han obtenido correctamente', {
+      items: response.items,
+      nextCursor: base64Cursor,
+    });
   }
 }

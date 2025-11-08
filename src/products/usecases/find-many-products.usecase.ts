@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProductsQueriesRepository } from '../repositories/products-queries.repository';
+import type { ProductCursor } from '@/shared/entities/cursor.entity';
 
 type Filters = {
   name?: string;
@@ -9,14 +10,10 @@ type Filters = {
   slug?: string;
 };
 
-type Cursor = {
-  lastCreatedAt: Date;
-  lastProductId: string;
-};
-
 type Options = {
   filters?: Filters;
-  cursor: Cursor | null;
+  cursor: ProductCursor | null;
+  limit: number;
 };
 
 @Injectable()
@@ -25,7 +22,7 @@ export class FindManyProductsUsecase {
     private readonly productsQueriesRepository: ProductsQueriesRepository,
   ) {}
 
-  public async execute(businessId: string, limit = 50, options: Options) {
+  public async execute(businessId: string, options: Options) {
     const { cursor, filters } = options;
 
     const products = await this.productsQueriesRepository.findManyBy(
@@ -42,15 +39,15 @@ export class FindManyProductsUsecase {
             }
           : undefined,
       },
-      { limit: limit + 1 },
+      { limit: options.limit + 1 },
       {
         cursor: cursor ?? null,
         ensureActive: true,
       },
     );
 
-    const nextCursor: Cursor | null =
-      products.length > limit
+    const nextCursor: ProductCursor | null =
+      products.length > options.limit
         ? {
             lastCreatedAt: products[products.length - 1].createdAt,
             lastProductId: products[products.length - 1].id,
@@ -58,7 +55,7 @@ export class FindManyProductsUsecase {
         : null;
 
     return {
-      items: products.slice(0, limit),
+      items: products.slice(0, options.limit),
       nextCursor,
     };
   }

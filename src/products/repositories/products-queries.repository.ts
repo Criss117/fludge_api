@@ -19,11 +19,7 @@ import {
 import { FindOneProductDto } from './dtos/find-one-product.dto';
 import { businesses } from '@/shared/dbschemas/businesses.schema';
 import { categories } from '@/shared/dbschemas/categories.schema';
-
-type Cursor = {
-  lastCreatedAt: Date;
-  lastProductId: string;
-};
+import { ProductCursor } from '@/shared/entities/cursor.entity';
 
 type Options = {
   ensureActive?: boolean;
@@ -41,7 +37,7 @@ export class ProductsQueriesRepository {
     meta: FindManyProductsByDto,
     shortOptions: ShortOptions,
     options?: Options & {
-      cursor: Cursor | null;
+      cursor: ProductCursor | null;
     },
   ): Promise<ProductSummary[]> {
     const optionsFilters: SQL[] = [];
