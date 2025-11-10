@@ -25,7 +25,8 @@ type Options = {
   ensureActive?: boolean;
 };
 
-type ShortOptions = {
+type FindManyOptions = Options & {
+  cursor: ProductCursor | null;
   limit: number;
 };
 
@@ -35,10 +36,7 @@ export class ProductsQueriesRepository {
 
   public async findManyBy(
     meta: FindManyProductsByDto,
-    shortOptions: ShortOptions,
-    options?: Options & {
-      cursor: ProductCursor | null;
-    },
+    options: FindManyOptions,
   ): Promise<ProductSummary[]> {
     const optionsFilters: SQL[] = [];
     const productsFilters: SQL[] = [];
@@ -80,7 +78,7 @@ export class ProductsQueriesRepository {
           ...optionsFilters,
         ),
       )
-      .limit(shortOptions.limit)
+      .limit(options.limit)
       .orderBy(desc(products.createdAt));
   }
 

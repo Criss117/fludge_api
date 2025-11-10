@@ -6,6 +6,7 @@ import { CanNotCreateCategoriesException } from '../exceptions/can-not-create-ca
 import { slugify } from '@/shared/utils/slugify';
 import { CategoryAlreadyExistsException } from '../exceptions/category-already-exists.exception';
 import { DBSERVICE, type LibSQLDatabase } from '@/db/db.module';
+import type { CategorySummary } from '@/shared/entities/categories.entity';
 
 @Injectable()
 export class CreateCategoryUsecase {
@@ -15,7 +16,10 @@ export class CreateCategoryUsecase {
     private readonly categoriesQueriesRepository: CategoriesQueriesRepository,
   ) {}
 
-  public async execute(businessId: string, values: CreateCategoryDto) {
+  public async execute(
+    businessId: string,
+    values: CreateCategoryDto,
+  ): Promise<CategorySummary[]> {
     if (values.parentId && values.childrens)
       throw new CanNotCreateCategoriesException(
         'No se pueden crear categorías con un padre e hijos al mismo tiempo',
@@ -50,7 +54,7 @@ export class CreateCategoryUsecase {
 
     const { childrens, ...parentCategory } = values;
 
-    await this.db.transaction(async (tx) => {
+    return this.db.transaction(async (tx) => {
       const parentCategoryCreated =
         await this.categoriesCommandsRepository.saveAndReturn(
           {
@@ -65,9 +69,9 @@ export class CreateCategoryUsecase {
           },
         );
 
-      if (!childrens) return;
+      if (!childrens) return [parentCategoryCreated];
 
-      await this.categoriesCommandsRepository.saveMany(
+      const savedChildrens = await this.categoriesCommandsRepository.saveMany(
         childrens.map((child) => ({
           name: child.name,
           slug: slugify(child.name),
@@ -79,6 +83,11 @@ export class CreateCategoryUsecase {
           tx,
         },
       );
+
+      return {
+        parentCategoryCreated,
+        ...savedChildrens,
+      };
     });
   }
 }

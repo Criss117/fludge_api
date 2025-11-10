@@ -39,11 +39,7 @@ export class FindManyProductsUsecase {
             }
           : undefined,
       },
-      { limit: options.limit + 1 },
-      {
-        cursor: cursor ?? null,
-        ensureActive: true,
-      },
+      { limit: options.limit + 1, cursor: cursor ?? null, ensureActive: true },
     );
 
     const nextCursor: ProductCursor | null =

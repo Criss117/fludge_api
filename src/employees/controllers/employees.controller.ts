@@ -25,12 +25,12 @@ export class EmployeesController {
     @GetBusiness('id') businessId: string,
     @Body() values: CreateEmployeeDto,
   ) {
-    await safeAction(
+    const response = await safeAction(
       () => this.createEmployeeUseCase.execute(businessId, values),
       'Error al crear el empleado',
     );
 
-    return HTTPResponse.created('Empleado creado correctamente');
+    return HTTPResponse.created('Empleado creado correctamente', response);
   }
 
   @Get(':employeeId')

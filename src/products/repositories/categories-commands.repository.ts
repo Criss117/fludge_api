@@ -53,6 +53,10 @@ export class CategoriesCommandsRepository {
   public async saveMany(values: InsertCategory[], options?: Options) {
     const db = options?.tx || this.db;
 
-    await db.insert(categories).values(values).onConflictDoNothing();
+    return db
+      .insert(categories)
+      .values(values)
+      .onConflictDoNothing()
+      .returning();
   }
 }

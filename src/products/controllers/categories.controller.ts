@@ -16,14 +16,14 @@ export class CategoriesController {
     @GetBusiness('id') businessId: string,
     @Body() values: CreateCategoryDto,
   ) {
-    await safeAction(
+    const response = await safeAction(
       () => this.createCategoryUsecase.execute(businessId, values),
       'No se pudieron crear las categorías',
     );
 
     return HTTPResponse.created(
       'Las categorías se han creado correctamente',
-      null,
+      response,
     );
   }
 }

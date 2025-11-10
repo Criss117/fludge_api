@@ -352,11 +352,15 @@ export class SeedService {
         minStock: faker.number.int({ min: 0, max: 100 }),
         stock: faker.number.int({ min: 0, max: 100 }),
         purchasePrice,
-        salePrice: Math.round(purchasePrice * 0.25),
-        offerPrice: Math.round(purchasePrice * 0.2),
-        wholesalePrice: Math.round(purchasePrice * 0.15),
+        salePrice: Math.round(purchasePrice * 1.25),
+        offerPrice: Math.round(purchasePrice * 1.2),
+        wholesalePrice: Math.round(purchasePrice * 1.15),
         allowNegativeStock: faker.datatype.boolean(),
         createdAt,
+        productImage: faker.image.url({
+          width: 300,
+          height: 300,
+        }),
         updatedAt: createdAt,
       };
     });

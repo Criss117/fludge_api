@@ -4,6 +4,7 @@ import { CreateUserUseCase } from '@/users/usecases/create-user.usecase';
 import { DBSERVICE, type LibSQLDatabase } from '@/db/db.module';
 import { EmployeesCommandsRepository } from '../repositories/employees-commands.repository';
 import { SaveManyEmployeesGroupsUseCase } from '@/employees-groups/usecases/save-many-employees-grouos.usecase';
+import { EmployeeDetail } from '@/shared/entities/employee.entity';
 
 @Injectable()
 export class CreateEmployeeUseCase {
@@ -14,8 +15,11 @@ export class CreateEmployeeUseCase {
     private readonly createUserUseCase: CreateUserUseCase,
   ) {}
 
-  public async execute(businessId: string, values: CreateEmployeeDto) {
-    await this.db.transaction(async (tx) => {
+  public async execute(
+    businessId: string,
+    values: CreateEmployeeDto,
+  ): Promise<EmployeeDetail> {
+    const createdEmplooyee = await this.db.transaction(async (tx) => {
       const user = await this.createUserUseCase.execute(
         {
           firstName: values.firstName,
@@ -43,7 +47,12 @@ export class CreateEmployeeUseCase {
           },
         );
 
-      if (!values.groupIds?.length) return;
+      if (!values.groupIds?.length)
+        return {
+          ...createdEmployee,
+          user,
+          groups: [],
+        };
 
       await this.saveManyEmployeesGroupsUseCase.execute(
         values.groupIds.map((groupId) => ({
@@ -54,6 +63,17 @@ export class CreateEmployeeUseCase {
           tx,
         },
       );
+
+      return {
+        ...createdEmployee,
+        user: {
+          ...user,
+          password: undefined,
+        },
+        groups: [],
+      };
     });
+
+    return createdEmplooyee;
   }
 }

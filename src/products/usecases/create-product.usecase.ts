@@ -6,6 +6,7 @@ import { slugify } from '@/shared/utils/slugify';
 import { ProductAlreadyExistsException } from '../exceptions/product-already-exists.exception';
 import { CategoriesQueriesRepository } from '../repositories/categories-queries.repository';
 import { CategoryNotFoundException } from '../exceptions/category-not-found.exception';
+import { ProductSummary } from '@/shared/entities/products.entity';
 
 @Injectable()
 export class CreateProductUsecase {
@@ -15,7 +16,10 @@ export class CreateProductUsecase {
     private readonly categoriesQueriesRepository: CategoriesQueriesRepository,
   ) {}
 
-  public async execute(businessId: string, values: CreateProductDto) {
+  public async execute(
+    businessId: string,
+    values: CreateProductDto,
+  ): Promise<ProductSummary> {
     const productSlug = slugify(values.name);
 
     const exisitingProducts = await this.productsQueriesRepository.findManyBy(
@@ -30,8 +34,6 @@ export class CreateProductUsecase {
       },
       {
         limit: 1,
-      },
-      {
         ensureActive: true,
         cursor: null,
       },
@@ -48,7 +50,7 @@ export class CreateProductUsecase {
       if (!category) throw new CategoryNotFoundException();
     }
 
-    await this.productsCommandsRepository.save({
+    return this.productsCommandsRepository.saveAndReturn({
       ...values,
       slug: productSlug,
       businessId,

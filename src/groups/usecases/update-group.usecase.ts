@@ -3,6 +3,7 @@ import { GroupsQueriesRepository } from '../repositories/groups-queries.reposito
 import { GroupsCommandsRepository } from '../repositories/groups-commands.repository';
 import { UpdateGroupDto } from '../dtos/update-group.dto';
 import { GroupNotFoundException } from '../exceptions/group-not-found.exception';
+import type { GroupSummary } from '@/shared/entities/group.entity';
 
 @Injectable()
 export class UpdateGroupUsecase {
@@ -11,7 +12,11 @@ export class UpdateGroupUsecase {
     private readonly groupsCommandsRepository: GroupsCommandsRepository,
   ) {}
 
-  async execute(businessId: string, groupId: string, values: UpdateGroupDto) {
+  async execute(
+    businessId: string,
+    groupId: string,
+    values: UpdateGroupDto,
+  ): Promise<GroupSummary> {
     const group = await this.groupsQueriesRepository.findOneBy({
       businessId,
       groupId,
@@ -19,7 +24,7 @@ export class UpdateGroupUsecase {
 
     if (!group) throw new GroupNotFoundException();
 
-    await this.groupsCommandsRepository.save({
+    return this.groupsCommandsRepository.saveAndReturn({
       ...group,
       ...values,
       businessId,

@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Query,
 } from '@nestjs/common';
@@ -65,21 +66,44 @@ export class ProductsController {
   @Permissions('products:read')
   public async findMany(
     @GetBusiness('id') businessId: string,
-    @Query('limit', ParseIntPipe) limit = 50,
     @Query('nextCursor', ProductsCursorPipe) cursor?: ProductCursor,
+    @Query('name') name?: string,
+    @Query('barcode') barcode?: string,
+    @Query('slug') slug?: string,
+    @Query(
+      'limit',
+      new ParseIntPipe({
+        optional: true,
+      }),
+    )
+    limit = 50,
+    @Query(
+      'categoryId',
+      new ParseUUIDPipe({
+        version: '7',
+        optional: true,
+      }),
+    )
+    categoryId?: string,
   ) {
     const response = await safeAction(
       () =>
         this.findManyProductsUsecase.execute(businessId, {
           limit,
           cursor: cursor ?? null,
+          filters: {
+            name,
+            barcode,
+            slug,
+            categoryId,
+          },
         }),
       'No se pudieron obtener los productos',
     );
 
-    const base64Cursor = Buffer.from(
-      JSON.stringify(response.nextCursor),
-    ).toString('base64');
+    const base64Cursor = response.nextCursor
+      ? Buffer.from(JSON.stringify(response.nextCursor)).toString('base64')
+      : null;
 
     return HTTPResponse.ok('Los productos se han obtenido correctamente', {
       items: response.items,

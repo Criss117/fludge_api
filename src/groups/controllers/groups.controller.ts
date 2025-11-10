@@ -70,12 +70,12 @@ export class GroupsController {
     @Param('groupId') groupId: string,
     @Body() values: UpdateGroupDto,
   ) {
-    await safeAction(
+    const response = await safeAction(
       () => this.updateGroupUseCase.execute(businessId, groupId, values),
       'Error al actualizar el grupo',
     );
 
-    return HTTPResponse.ok('Grupo actualizado correctamente');
+    return HTTPResponse.ok('Grupo actualizado correctamente', response);
   }
 
   @Patch(':groupId/permissions')
